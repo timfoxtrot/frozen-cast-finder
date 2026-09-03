@@ -1,346 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Frozen Cast Finder</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Petrona:wght@500;600&family=Work+Sans:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap');
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-slate-900">
+<div class="mx-auto max-w-xl px-4 pb-16 pt-8 sm:pt-10">
 
-:root{
-  --bg:#f7f2e6;
-  --surface:#ffffff;
-  --surface-alt:#efe6d1;
-  --ink:#251f18;
-  --ink-muted:#7a6d5b;
-  --border:#e0d5bd;
-  --accent:#7c2634;
-  --accent-tint:#f4e4e2;
-  --accent-ink:#fbf0e6;
-  --focus:#7c2634;
-  --shadow:0 1px 2px rgba(37,31,24,.05), 0 4px 14px rgba(37,31,24,.06);
-}
+  <header class="mb-6 text-center">
+    <p class="text-[11px] font-medium uppercase tracking-wide text-slate-400">Frozen &middot; Sept 3&ndash;6</p>
+    <h1 class="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl">Who are you going to watch?</h1>
+    <p class="mx-auto mt-2 max-w-xs text-sm text-slate-500">Pick everyone you want to see &mdash; we'll rank every show by how many of your picks are in it.</p>
+  </header>
 
-*{box-sizing:border-box;}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font-family:'Work Sans',ui-sans-serif,system-ui,sans-serif;
-  -webkit-font-smoothing:antialiased;
-}
-.wrap{
-  max-width:640px;
-  margin:0 auto;
-  padding:2.75rem 1.25rem 4rem;
-}
-
-/* header */
-.masthead{
-  text-align:center;
-  margin-bottom:2.1rem;
-}
-.eyebrow{
-  font-family:'Courier Prime',ui-monospace,monospace;
-  font-size:.74rem;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:var(--ink-muted);
-  margin:0 0 .65rem;
-}
-h1{
-  font-family:'Petrona',Georgia,serif;
-  font-weight:600;
-  font-size:clamp(1.85rem,5.5vw,2.5rem);
-  line-height:1.15;
-  letter-spacing:-.01em;
-  margin:0 0 .6rem;
-  color:var(--ink);
-  text-wrap:balance;
-}
-.sub{
-  color:var(--ink-muted);
-  font-size:.95rem;
-  max-width:34ch;
-  margin:0 auto;
-  line-height:1.55;
-}
-
-/* search + doesn't matter */
-.controls{
-  display:flex;
-  flex-direction:column;
-  gap:.6rem;
-  margin-bottom:1.8rem;
-}
-.search{
-  width:100%;
-  padding:.75rem .95rem;
-  border-radius:.5rem;
-  border:1px solid var(--border);
-  background:var(--surface);
-  color:var(--ink);
-  font-family:'Work Sans',sans-serif;
-  font-size:.94rem;
-}
-.search::placeholder{color:var(--ink-muted);}
-.search:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
-
-.idc-btn{
-  width:100%;
-  padding:.7rem 1rem;
-  border-radius:.5rem;
-  border:1px solid var(--border);
-  background:var(--surface);
-  color:var(--ink-muted);
-  font-family:'Work Sans',sans-serif;
-  font-weight:600;
-  font-size:.85rem;
-  cursor:pointer;
-  transition:border-color .15s ease, color .15s ease, background .15s ease;
-}
-.idc-btn:hover{border-color:var(--accent); color:var(--accent);}
-.idc-btn:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
-.idc-btn[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
-
-/* cast, grouped by role */
-.name-grid{
-  display:flex;
-  flex-direction:column;
-  gap:1.1rem;
-  margin-bottom:2rem;
-}
-.role-section.hidden{display:none;}
-.role-label{
-  font-family:'Courier Prime',ui-monospace,monospace;
-  font-size:.68rem;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  color:var(--ink-muted);
-  margin:0 0 .45rem;
-}
-.role-chips{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.45rem;
-}
-.name-chip{
-  padding:.42rem .8rem;
-  border-radius:999px;
-  border:1px solid var(--border);
-  background:var(--surface);
-  color:var(--ink);
-  font-family:'Work Sans',sans-serif;
-  font-size:.85rem;
-  font-weight:500;
-  cursor:pointer;
-  transition:border-color .15s ease, background .15s ease, color .15s ease;
-}
-.name-chip:hover{border-color:var(--accent);}
-.name-chip:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
-.name-chip[aria-pressed="true"]{
-  background:var(--accent);
-  border-color:var(--accent);
-  color:var(--accent-ink);
-  font-weight:600;
-}
-.name-chip.hidden{display:none;}
-.no-match{color:var(--ink-muted); font-size:.88rem; margin:0;}
-.no-match[hidden]{display:none;}
-
-/* results */
-#results{scroll-margin-top:1rem;}
-.results-head{
-  display:flex;
-  align-items:baseline;
-  justify-content:space-between;
-  gap:.6rem;
-  margin-bottom:.5rem;
-  flex-wrap:wrap;
-}
-.results-title{
-  font-family:'Petrona',Georgia,serif;
-  font-weight:600;
-  font-size:1.3rem;
-  margin:0;
-  color:var(--ink);
-}
-.results-count{
-  font-family:'Courier Prime',ui-monospace,monospace;
-  font-size:.74rem;
-  color:var(--ink-muted);
-}
-
-.tickets{
-  display:flex;
-  flex-direction:column;
-  gap:.6rem;
-}
-.ticket{
-  display:grid;
-  grid-template-columns:3.4rem 1fr auto;
-  align-items:center;
-  gap:.9rem;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:.6rem;
-  padding:.85rem 1rem;
-  box-shadow:var(--shadow);
-}
-.ticket-date{
-  font-family:'Courier Prime',ui-monospace,monospace;
-  font-variant-numeric:tabular-nums;
-  text-align:center;
-  line-height:1.15;
-  min-width:0;
-  border-right:1px solid var(--border);
-  padding-right:.8rem;
-}
-.ticket-date .day{
-  display:block;
-  font-size:.64rem;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  color:var(--ink-muted);
-}
-.ticket-date .num{
-  display:block;
-  font-size:1.25rem;
-  font-weight:700;
-  color:var(--ink);
-}
-.ticket-date .mon{
-  display:block;
-  font-size:.64rem;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-  color:var(--ink-muted);
-}
-.ticket-mid{min-width:0;}
-.ticket-label{
-  font-weight:600;
-  font-size:.95rem;
-  margin:0 0 .2rem;
-}
-.ticket-role{
-  font-size:.82rem;
-  color:var(--ink-muted);
-  margin:0;
-}
-.ticket-role b{color:var(--ink); font-weight:600;}
-.ticket-right{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-end;
-  gap:.3rem;
-  text-align:right;
-}
-.ticket-time{
-  font-family:'Courier Prime',ui-monospace,monospace;
-  font-variant-numeric:tabular-nums;
-  font-size:.8rem;
-  color:var(--ink-muted);
-  white-space:nowrap;
-}
-.cast-badge{
-  font-family:'Courier Prime',ui-monospace,monospace;
-  font-size:.68rem;
-  font-weight:700;
-  letter-spacing:.02em;
-  padding:.12rem .5rem;
-  border-radius:.25rem;
-  white-space:nowrap;
-  border:1px solid var(--border);
-  color:var(--ink-muted);
-}
-
-.ticket-best{
-  border-color:var(--accent);
-  border-left-width:3px;
-}
-.best-tag{
-  display:inline-block;
-  font-family:'Courier Prime',ui-monospace,monospace;
-  font-size:.6rem;
-  font-weight:700;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-  color:var(--accent);
-  margin-left:.45rem;
-  vertical-align:middle;
-}
-.match-badge{
-  font-family:'Courier Prime',ui-monospace,monospace;
-  font-variant-numeric:tabular-nums;
-  font-size:.7rem;
-  font-weight:700;
-  color:var(--ink);
-  background:var(--surface-alt);
-  padding:.14rem .48rem;
-  border-radius:.25rem;
-  white-space:nowrap;
-}
-.ticket-role .as-role{color:var(--ink-muted); font-weight:400;}
-.ticket-missing{
-  font-size:.76rem;
-  color:var(--ink-muted);
-  margin:.3rem 0 0;
-}
-.picks-line{
-  color:var(--ink-muted);
-  font-size:.85rem;
-  margin:0 0 .9rem;
-}
-.picks-line b{color:var(--accent); font-weight:600;}
-
-.empty-state{
-  border:1px solid var(--border);
-  border-radius:.6rem;
-  padding:1.5rem 1.2rem;
-  text-align:center;
-  color:var(--ink-muted);
-  font-size:.9rem;
-  background:var(--surface);
-}
-
-footer{
-  margin-top:2.75rem;
-  text-align:center;
-  font-family:'Courier Prime',ui-monospace,monospace;
-  font-size:.72rem;
-  color:var(--ink-muted);
-}
-
-@media (prefers-reduced-motion: reduce){
-  *{transition:none !important;}
-}
-</style>
-
-<div class="wrap">
-  <div class="masthead">
-    <p class="eyebrow">Frozen &mdash; Sept 3&ndash;6</p>
-    <h1>Who are you going to watch?</h1>
-    <p class="sub">Pick everyone you want to see &mdash; we'll rank every performance by how many of your picks are in it.</p>
+  <div class="mb-5 space-y-2">
+    <input id="search" type="text" placeholder="Search the cast&hellip;" autocomplete="off" aria-label="Search cast members"
+      class="w-full rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400">
+    <button id="idc-btn" type="button" aria-pressed="false"
+      class="w-full rounded-md border border-slate-200 px-3 py-2 text-sm font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-700">
+      It doesn't matter &mdash; just show me the full run
+    </button>
   </div>
 
-  <div class="controls">
-    <input class="search" id="search" type="text" placeholder="Search the cast&hellip;" autocomplete="off" aria-label="Search cast members">
-    <button class="idc-btn" id="idc-btn" type="button" aria-pressed="false">It doesn't matter &mdash; just show me the full run</button>
-  </div>
+  <div id="name-grid" class="mb-2 border-y border-slate-100 divide-y divide-slate-100" role="group" aria-label="Cast members, by role"></div>
+  <p id="no-match" hidden class="py-2 text-sm text-slate-400">No one by that name &mdash; check the spelling?</p>
 
-  <div class="name-grid" id="name-grid" role="group" aria-label="Cast members, by role"></div>
-  <p class="no-match" id="no-match" hidden>No one by that name &mdash; check the spelling?</p>
+  <div id="results" class="mt-6"></div>
 
-  <div id="results"></div>
-
-  <footer>Eight performances, one big feeling. Bring tissues for Act II.</footer>
+  <footer class="mt-10 text-center text-xs text-slate-400">Eight performances, one big feeling.</footer>
 </div>
 
 <script>
 const PERFORMANCES = [
-  {mon:"Sep", num:"3",  day:"Thu", full:"Thursday, September 3", time:"9:00 AM", cast:"B", label:"School Show"},
-  {mon:"Sep", num:"3",  day:"Thu", full:"Thursday, September 3", time:"7:00 PM", cast:"A", label:"Special Invitation"},
-  {mon:"Sep", num:"4",  day:"Fri", full:"Friday, September 4",   time:"9:00 AM", cast:"B", label:"School Show"},
-  {mon:"Sep", num:"4",  day:"Fri", full:"Friday, September 4",   time:"7:00 PM", cast:"A", label:"Opening Night"},
-  {mon:"Sep", num:"5",  day:"Sat", full:"Saturday, September 5", time:"2:00 PM", cast:"A", label:"Matinee Show"},
-  {mon:"Sep", num:"5",  day:"Sat", full:"Saturday, September 5", time:"7:00 PM", cast:"B", label:"Evening Show"},
-  {mon:"Sep", num:"6",  day:"Sun", full:"Sunday, September 6",   time:"3:00 PM", cast:"A", label:"Matinee Show"},
-  {mon:"Sep", num:"6",  day:"Sun", full:"Sunday, September 6",   time:"7:00 PM", cast:"B", label:"Closing Show"},
+  {mon:"Sep", num:"3",  day:"Thu", time:"9:00 AM", cast:"B", label:"School Show"},
+  {mon:"Sep", num:"3",  day:"Thu", time:"7:00 PM", cast:"A", label:"Special Invitation"},
+  {mon:"Sep", num:"4",  day:"Fri", time:"9:00 AM", cast:"B", label:"School Show"},
+  {mon:"Sep", num:"4",  day:"Fri", time:"7:00 PM", cast:"A", label:"Opening Night"},
+  {mon:"Sep", num:"5",  day:"Sat", time:"2:00 PM", cast:"A", label:"Matinee Show"},
+  {mon:"Sep", num:"5",  day:"Sat", time:"7:00 PM", cast:"B", label:"Evening Show"},
+  {mon:"Sep", num:"6",  day:"Sun", time:"3:00 PM", cast:"A", label:"Matinee Show"},
+  {mon:"Sep", num:"6",  day:"Sun", time:"7:00 PM", cast:"B", label:"Closing Show"},
 ];
 
 const ROLES = {
@@ -393,124 +94,171 @@ const noMatchEl = document.getElementById('no-match');
 const selected = new Set(); // raw names, multi-select
 let idcActive = false;
 
-// One section per role, in spreadsheet order; each role lists the people
-// who ever played it (a person can appear in more than one role's section).
+const CHIP_ON = ['bg-slate-900','border-slate-900','text-white'];
+const CHIP_OFF = ['bg-white','border-slate-200','text-slate-700'];
+
+// One inline row per role, in spreadsheet order; each role lists everyone
+// who ever played it (a person can appear in more than one role's row).
 Object.entries(ROLES).forEach(([role, casts]) => {
   const uniqueRaw = [...new Set(casts)];
 
-  const section = document.createElement('div');
-  section.className = 'role-section';
+  const row = document.createElement('div');
+  row.className = 'role-row flex flex-wrap items-center gap-x-2 gap-y-1.5 py-2';
 
-  const label = document.createElement('p');
-  label.className = 'role-label';
+  const label = document.createElement('span');
+  label.className = 'shrink-0 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wide text-slate-400';
   label.textContent = role;
-  section.appendChild(label);
+  row.appendChild(label);
 
   const chipRow = document.createElement('div');
-  chipRow.className = 'role-chips';
+  chipRow.className = 'flex flex-1 flex-wrap gap-1.5';
   uniqueRaw.forEach(raw => {
     const chip = document.createElement('button');
     chip.type = 'button';
-    chip.className = 'name-chip';
+    chip.className = ['name-chip','rounded-full','border','px-2.5','py-1','text-xs','font-medium','transition-colors',...CHIP_OFF].join(' ');
     chip.textContent = DISPLAY_NAME[raw];
     chip.setAttribute('aria-pressed', 'false');
     chip.dataset.raw = raw;
     chip.addEventListener('click', () => toggleName(raw));
     chipRow.appendChild(chip);
   });
-  section.appendChild(chipRow);
-  grid.appendChild(section);
+  row.appendChild(chipRow);
+  grid.appendChild(row);
 });
 
 function toggleName(raw){
   idcActive = false;
-  idcBtn.setAttribute('aria-pressed','false');
+  setIdcPressed(false);
   const nowPressed = !selected.has(raw);
   if(nowPressed) selected.add(raw); else selected.delete(raw);
-  // a person can have a chip in more than one role section — keep them in sync
-  grid.querySelectorAll(`.name-chip[data-raw="${CSS.escape(raw)}"]`)
-    .forEach(c => c.setAttribute('aria-pressed', String(nowPressed)));
+  // a person can have a chip in more than one role row — keep them in sync
+  grid.querySelectorAll(`.name-chip[data-raw="${CSS.escape(raw)}"]`).forEach(c => {
+    c.setAttribute('aria-pressed', String(nowPressed));
+    c.classList.remove(...(nowPressed ? CHIP_OFF : CHIP_ON));
+    c.classList.add(...(nowPressed ? CHIP_ON : CHIP_OFF));
+  });
   renderResults();
+}
+
+function setIdcPressed(on){
+  idcBtn.setAttribute('aria-pressed', String(on));
+  idcBtn.classList.toggle('bg-slate-900', on);
+  idcBtn.classList.toggle('border-slate-900', on);
+  idcBtn.classList.toggle('text-white', on);
+  idcBtn.classList.toggle('text-slate-500', !on);
 }
 
 idcBtn.addEventListener('click', () => {
   selected.clear();
-  grid.querySelectorAll('.name-chip').forEach(c => c.setAttribute('aria-pressed','false'));
+  grid.querySelectorAll('.name-chip').forEach(c => {
+    c.setAttribute('aria-pressed','false');
+    c.classList.remove(...CHIP_ON);
+    c.classList.add(...CHIP_OFF);
+  });
   idcActive = true;
-  idcBtn.setAttribute('aria-pressed','true');
+  setIdcPressed(true);
   renderFullRun();
 });
 
 searchEl.addEventListener('input', () => {
   const q = searchEl.value.trim().toLowerCase();
   let anyVisible = false;
-  grid.querySelectorAll('.role-section').forEach(section => {
-    let sectionVisible = false;
-    section.querySelectorAll('.name-chip').forEach(chip => {
+  grid.querySelectorAll('.role-row').forEach(row => {
+    let rowVisible = false;
+    row.querySelectorAll('.name-chip').forEach(chip => {
       const match = DISPLAY_NAME[chip.dataset.raw].toLowerCase().includes(q);
       chip.classList.toggle('hidden', !match);
-      if(match){ sectionVisible = true; anyVisible = true; }
+      if(match){ rowVisible = true; anyVisible = true; }
     });
-    section.classList.toggle('hidden', !sectionVisible);
+    row.classList.toggle('hidden', !rowVisible);
   });
   noMatchEl.hidden = anyVisible;
 });
 
-function ticketHTML(perf, roleText){
+function fullCastListHTML(i){
+  const rows = Object.entries(ROLES).map(([role, casts]) =>
+    `<div class="truncate"><span class="text-slate-400">${role}</span>
+      <span class="text-slate-800">${DISPLAY_NAME[casts[i]]}</span></div>`
+  ).join('');
   return `
-    <div class="ticket">
-      <div class="ticket-date">
-        <span class="day">${perf.day}</span>
-        <span class="num">${perf.num}</span>
-        <span class="mon">${perf.mon}</span>
-      </div>
-      <div class="ticket-mid">
-        <p class="ticket-label">${perf.label}</p>
-        <p class="ticket-role">${roleText}</p>
-      </div>
-      <div class="ticket-right">
-        <span class="cast-badge ${perf.cast.toLowerCase()}">Cast ${perf.cast}</span>
-        <span class="ticket-time">${perf.time}</span>
-      </div>
+    <div class="border-t border-slate-100 px-3 py-3">
+      <p class="mb-2 text-[10px] font-semibold uppercase tracking-wide text-slate-400">Full cast</p>
+      <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs sm:grid-cols-3">${rows}</div>
     </div>`;
 }
 
-function bestTicketHTML(perf, matched, total, isBest){
-  const names = matched.map(m =>
-    `<b>${DISPLAY_NAME[m.raw]}</b> <span class="as-role">as ${m.roles.join(' &amp; ')}</span>`
-  ).join(', ');
-  const missing = total > 1
-    ? [...selected].filter(raw => !matched.some(m => m.raw === raw))
-    : [];
-  const missingHTML = missing.length
-    ? `<p class="ticket-missing">Not in this one: ${missing.map(raw => DISPLAY_NAME[raw]).join(', ')}</p>`
-    : '';
-  const bestTag = isBest && total > 1 ? '<span class="best-tag">Best match</span>' : '';
-  const badge = total > 1 ? `<span class="match-badge">${matched.length}/${total}</span>` : '';
+const CHEVRON = `<svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4 shrink-0 text-slate-300 transition-transform duration-150 group-open:rotate-180">
+  <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/>
+</svg>`;
 
+function ticketShell(i, summaryHTML){
   return `
-    <div class="ticket ${isBest && total > 1 ? 'ticket-best' : ''}">
-      <div class="ticket-date">
-        <span class="day">${perf.day}</span>
-        <span class="num">${perf.num}</span>
-        <span class="mon">${perf.mon}</span>
-      </div>
-      <div class="ticket-mid">
-        <p class="ticket-label">${perf.label}${bestTag}</p>
-        <p class="ticket-role">${names}</p>
-        ${missingHTML}
-      </div>
-      <div class="ticket-right">
-        ${badge}
-        <span class="cast-badge ${perf.cast.toLowerCase()}">Cast ${perf.cast}</span>
-        <span class="ticket-time">${perf.time}</span>
-      </div>
+    <details class="group rounded-lg border border-slate-200 open:border-slate-300">
+      <summary class="flex cursor-pointer list-none items-center gap-3 p-3 [&::-webkit-details-marker]:hidden">
+        ${summaryHTML}
+        ${CHEVRON}
+      </summary>
+      ${fullCastListHTML(i)}
+    </details>`;
+}
+
+function dateBlockHTML(perf){
+  return `
+    <div class="w-10 shrink-0 text-center leading-tight">
+      <div class="text-[9px] uppercase text-slate-400">${perf.day}</div>
+      <div class="text-lg font-bold text-slate-900">${perf.num}</div>
+      <div class="text-[9px] uppercase text-slate-400">${perf.mon}</div>
     </div>`;
+}
+
+function rightColHTML(perf, extraBadge){
+  return `
+    <div class="flex shrink-0 flex-col items-end gap-0.5 text-right">
+      ${extraBadge || ''}
+      <span class="text-[10px] font-medium text-slate-400">Cast ${perf.cast}</span>
+      <span class="text-xs text-slate-500">${perf.time}</span>
+    </div>`;
+}
+
+function bestTicketHTML(perf, i, matched, total, isBest){
+  const names = matched.map(m =>
+    `<b class="font-semibold text-slate-800">${DISPLAY_NAME[m.raw]}</b> <span class="text-slate-400">as ${m.roles.join(' &amp; ')}</span>`
+  ).join(', ');
+  const missing = total > 1 ? [...selected].filter(raw => !matched.some(m => m.raw === raw)) : [];
+  const missingHTML = missing.length
+    ? `<p class="mt-0.5 truncate text-[11px] text-slate-400">Not in this one: ${missing.map(raw => DISPLAY_NAME[raw]).join(', ')}</p>`
+    : '';
+  const bestTag = isBest && total > 1 ? '<span class="ml-1.5 text-[10px] font-semibold uppercase text-emerald-600">Best match</span>' : '';
+  const badge = total > 1
+    ? `<span class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600">${matched.length}/${total}</span>`
+    : '';
+
+  const summary = `
+    ${dateBlockHTML(perf)}
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-sm font-semibold text-slate-900">${perf.label}${bestTag}</p>
+      <p class="truncate text-xs text-slate-500">${names}</p>
+      ${missingHTML}
+    </div>
+    ${rightColHTML(perf, badge)}`;
+
+  return ticketShell(i, summary);
+}
+
+function plainTicketHTML(perf, i){
+  const summary = `
+    ${dateBlockHTML(perf)}
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-sm font-semibold text-slate-900">${perf.label}</p>
+      <p class="truncate text-xs text-slate-400">Tap to see the full cast</p>
+    </div>
+    ${rightColHTML(perf, '')}`;
+  return ticketShell(i, summary);
 }
 
 function renderResults(){
   if(selected.size === 0){
-    resultsEl.innerHTML = `<div class="empty-state">Pick one or more cast members above and we'll rank the shows for you.</div>`;
+    resultsEl.innerHTML = `<div class="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-400">Pick one or more cast members above and we'll rank the shows for you.</div>`;
     return;
   }
 
@@ -523,15 +271,15 @@ function renderResults(){
           return entry ? {raw, roles: entry.roles} : null;
         })
         .filter(Boolean);
-      return {perf, matched};
+      return {perf, i, matched};
     })
     .filter(r => r.matched.length > 0)
     .sort((a, b) => b.matched.length - a.matched.length);
 
   if(ranked.length === 0){
     resultsEl.innerHTML = `
-      <div class="results-head"><h2 class="results-title">No overlap</h2></div>
-      <div class="empty-state">None of your picks share a performance &mdash; double-check the names or try fewer picks.</div>
+      <h2 class="mb-2 text-lg font-bold text-slate-900">No overlap</h2>
+      <div class="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-400">None of your picks share a performance &mdash; try fewer picks.</div>
     `;
     return;
   }
@@ -539,33 +287,35 @@ function renderResults(){
   const bestCount = ranked[0].matched.length;
   const title = total === 1 ? `${DISPLAY_NAME[[...selected][0]]}'s performances` : 'Best show for your group';
   const picksLine = total > 1
-    ? `<p class="picks-line">Ranked for: ${[...selected].map(r => `<b>${DISPLAY_NAME[r]}</b>`).join(', ')}</p>`
+    ? `<p class="mb-3 text-xs text-slate-400">Ranked for: ${[...selected].map(r => `<b class="font-semibold text-slate-600">${DISPLAY_NAME[r]}</b>`).join(', ')}</p>`
     : '';
 
-  const tickets = ranked.map(r => bestTicketHTML(r.perf, r.matched, total, r.matched.length === bestCount)).join('');
+  const tickets = ranked.map(r => bestTicketHTML(r.perf, r.i, r.matched, total, r.matched.length === bestCount)).join('');
 
   resultsEl.innerHTML = `
-    <div class="results-head">
-      <h2 class="results-title">${title}</h2>
-      <span class="results-count">${ranked.length} of 8 shows</span>
+    <div class="mb-1 flex flex-wrap items-baseline justify-between gap-2">
+      <h2 class="text-lg font-bold text-slate-900">${title}</h2>
+      <span class="text-xs text-slate-400">${ranked.length} of 8 shows</span>
     </div>
     ${picksLine}
-    <div class="tickets">${tickets}</div>
+    <div class="space-y-2">${tickets}</div>
   `;
   resultsEl.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 function renderFullRun(){
-  const tickets = PERFORMANCES.map(perf => ticketHTML(perf, `${perf.full}`)).join('');
+  const tickets = PERFORMANCES.map((perf, i) => plainTicketHTML(perf, i)).join('');
   resultsEl.innerHTML = `
-    <div class="results-head">
-      <h2 class="results-title">Any night's a good night</h2>
-      <span class="results-count">8 shows</span>
+    <div class="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+      <h2 class="text-lg font-bold text-slate-900">Any night's a good night</h2>
+      <span class="text-xs text-slate-400">8 shows</span>
     </div>
-    <div class="tickets">${tickets}</div>
+    <div class="space-y-2">${tickets}</div>
   `;
   resultsEl.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 renderResults();
 </script>
+</body>
+</html>
