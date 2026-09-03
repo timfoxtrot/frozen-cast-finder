@@ -298,8 +298,7 @@ function renderResults(){
 function renderFullRun(){
   const tickets = PERFORMANCES.map((perf, i) => plainTicketHTML(perf, i)).join('');
   resultsEl.innerHTML = `
-    <div class="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-      <h2 class="text-lg font-bold text-slate-900">Any night's a good night</h2>
+    <div class="mb-3 flex justify-end">
       <span class="text-xs text-slate-400">8 shows</span>
     </div>
     <div class="space-y-2">${tickets}</div>
