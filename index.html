@@ -1,90 +1,62 @@
 <title>Frozen Cast Finder</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Petrona:wght@500;600&family=Work+Sans:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap');
 
 :root{
-  --bg:#150f1a;
-  --curtain:#1f1620;
-  --curtain-raised:#2a1e2a;
-  --paper:#f4e6c4;
-  --paper-shade:#e9d7a8;
-  --ink:#2c1d14;
-  --ink-soft:#5c493a;
-  --text:#f2e9d8;
-  --text-muted:#a4917e;
-  --border-dark:#3b2c37;
-  --border-paper:rgba(44,29,20,.22);
-  --accent:#ffb703;
-  --accent-ink:#1d1300;
-  --accent2:#e0483e;
-  --accent2-ink:#2a0805;
-  --focus:#ffb703;
+  --bg:#f7f2e6;
+  --surface:#ffffff;
+  --surface-alt:#efe6d1;
+  --ink:#251f18;
+  --ink-muted:#7a6d5b;
+  --border:#e0d5bd;
+  --accent:#7c2634;
+  --accent-tint:#f4e4e2;
+  --accent-ink:#fbf0e6;
+  --focus:#7c2634;
+  --shadow:0 1px 2px rgba(37,31,24,.05), 0 4px 14px rgba(37,31,24,.06);
 }
 
 *{box-sizing:border-box;}
 body{
   margin:0;
-  background:
-    radial-gradient(ellipse 900px 420px at 50% -10%, rgba(255,183,3,.10), transparent 60%),
-    var(--bg);
-  color:var(--text);
-  font-family:'Archivo',ui-sans-serif,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Work Sans',ui-sans-serif,system-ui,sans-serif;
   -webkit-font-smoothing:antialiased;
 }
 .wrap{
   max-width:640px;
   margin:0 auto;
-  padding:2.5rem 1.25rem 4rem;
+  padding:2.75rem 1.25rem 4rem;
 }
 
-/* header — a lit marquee sign */
-.marquee{
-  position:relative;
+/* header */
+.masthead{
   text-align:center;
-  background:var(--curtain);
-  border:1px solid var(--border-dark);
-  border-radius:.9rem;
-  padding:2rem 1.5rem 1.7rem;
   margin-bottom:2.1rem;
-  overflow:hidden;
 }
-.marquee::before,
-.marquee::after{
-  content:"";
-  position:absolute;
-  left:0; right:0;
-  height:9px;
-  background-image:radial-gradient(circle, var(--accent) 1.6px, transparent 1.8px);
-  background-size:20px 9px;
-  background-position:10px center;
-  opacity:.8;
-}
-.marquee::before{top:0;}
-.marquee::after{bottom:0;}
 .eyebrow{
-  font-family:'Space Mono',ui-monospace,monospace;
-  font-size:.7rem;
-  letter-spacing:.18em;
+  font-family:'Courier Prime',ui-monospace,monospace;
+  font-size:.74rem;
+  letter-spacing:.14em;
   text-transform:uppercase;
-  color:var(--accent);
-  margin:0 0 .7rem;
+  color:var(--ink-muted);
+  margin:0 0 .65rem;
 }
 h1{
-  font-family:'Bebas Neue',Impact,ui-sans-serif,sans-serif;
-  font-weight:400;
-  text-transform:uppercase;
-  font-size:clamp(2.15rem,7.2vw,3.15rem);
-  line-height:1.02;
-  letter-spacing:.02em;
+  font-family:'Petrona',Georgia,serif;
+  font-weight:600;
+  font-size:clamp(1.85rem,5.5vw,2.5rem);
+  line-height:1.15;
+  letter-spacing:-.01em;
   margin:0 0 .6rem;
-  color:var(--text);
-  text-shadow:0 0 22px rgba(255,183,3,.3);
+  color:var(--ink);
   text-wrap:balance;
 }
 .sub{
-  color:var(--text-muted);
+  color:var(--ink-muted);
   font-size:.95rem;
-  max-width:32ch;
+  max-width:34ch;
   margin:0 auto;
   line-height:1.55;
 }
@@ -93,105 +65,83 @@ h1{
 .controls{
   display:flex;
   flex-direction:column;
-  gap:.7rem;
-  margin-bottom:1.5rem;
+  gap:.6rem;
+  margin-bottom:1.8rem;
 }
 .search{
   width:100%;
-  padding:.8rem 1rem;
-  border-radius:.55rem;
-  border:1px solid var(--border-dark);
-  background:var(--curtain);
-  color:var(--text);
-  font-family:'Archivo',sans-serif;
-  font-size:.95rem;
+  padding:.75rem .95rem;
+  border-radius:.5rem;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--ink);
+  font-family:'Work Sans',sans-serif;
+  font-size:.94rem;
 }
-.search::placeholder{color:var(--text-muted);}
+.search::placeholder{color:var(--ink-muted);}
 .search:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
 
 .idc-btn{
   width:100%;
-  padding:.85rem 1rem;
-  border-radius:.55rem;
-  border:1.5px dashed var(--accent2);
-  background:transparent;
-  color:var(--accent2);
-  font-family:'Space Mono',ui-monospace,monospace;
-  font-weight:700;
-  font-size:.78rem;
-  letter-spacing:.04em;
-  text-transform:uppercase;
+  padding:.7rem 1rem;
+  border-radius:.5rem;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--ink-muted);
+  font-family:'Work Sans',sans-serif;
+  font-weight:600;
+  font-size:.85rem;
   cursor:pointer;
-  transition:background .15s ease, color .15s ease;
+  transition:border-color .15s ease, color .15s ease, background .15s ease;
 }
-.idc-btn:hover{background:var(--accent2); color:var(--accent2-ink);}
+.idc-btn:hover{border-color:var(--accent); color:var(--accent);}
 .idc-btn:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
-.idc-btn[aria-pressed="true"]{background:var(--accent2); color:var(--accent2-ink);}
+.idc-btn[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
 
-/* name grid — marquee bulb tags */
-.section-label{
-  font-family:'Space Mono',ui-monospace,monospace;
-  font-size:.7rem;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-  color:var(--text-muted);
-  margin:0 0 .6rem;
-}
+/* cast, grouped by role */
 .name-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(128px,1fr));
-  gap:.55rem;
-  margin-bottom:2.2rem;
-}
-.name-chip{
-  position:relative;
   display:flex;
   flex-direction:column;
-  gap:.18rem;
-  padding:.55rem .75rem .55rem 1.65rem;
-  border-radius:.55rem;
-  border:1px solid var(--border-dark);
-  background:var(--curtain);
+  gap:1.1rem;
+  margin-bottom:2rem;
+}
+.role-section.hidden{display:none;}
+.role-label{
+  font-family:'Courier Prime',ui-monospace,monospace;
+  font-size:.68rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-muted);
+  margin:0 0 .45rem;
+}
+.role-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.45rem;
+}
+.name-chip{
+  padding:.42rem .8rem;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--ink);
+  font-family:'Work Sans',sans-serif;
+  font-size:.85rem;
+  font-weight:500;
   cursor:pointer;
-  text-align:left;
   transition:border-color .15s ease, background .15s ease, color .15s ease;
-}
-.name-chip::before{
-  content:"";
-  position:absolute;
-  left:.68rem;
-  top:50%;
-  transform:translateY(-50%);
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--border-dark);
-  transition:background .15s ease, box-shadow .15s ease;
-}
-.chip-name{
-  font-size:.87rem;
-  font-weight:700;
-  color:var(--text);
-}
-.chip-role{
-  font-family:'Space Mono',ui-monospace,monospace;
-  font-size:.66rem;
-  letter-spacing:.01em;
-  color:var(--text-muted);
 }
 .name-chip:hover{border-color:var(--accent);}
 .name-chip:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
 .name-chip[aria-pressed="true"]{
-  border-color:var(--accent);
-  background:color-mix(in srgb, var(--accent) 13%, var(--curtain));
-}
-.name-chip[aria-pressed="true"]::before{
   background:var(--accent);
-  box-shadow:0 0 7px 2px rgba(255,183,3,.75);
+  border-color:var(--accent);
+  color:var(--accent-ink);
+  font-weight:600;
 }
-.name-chip[aria-pressed="true"] .chip-name{color:var(--accent);}
 .name-chip.hidden{display:none;}
-.no-match{grid-column:1/-1; color:var(--text-muted); font-size:.88rem; padding:.3rem .1rem;}
+.no-match{color:var(--ink-muted); font-size:.88rem; margin:0;}
+.no-match[hidden]{display:none;}
 
 /* results */
 #results{scroll-margin-top:1rem;}
@@ -200,181 +150,160 @@ h1{
   align-items:baseline;
   justify-content:space-between;
   gap:.6rem;
-  margin-bottom:.7rem;
+  margin-bottom:.5rem;
   flex-wrap:wrap;
 }
 .results-title{
-  font-family:'Bebas Neue',Impact,ui-sans-serif,sans-serif;
-  font-weight:400;
-  text-transform:uppercase;
-  letter-spacing:.02em;
-  font-size:1.55rem;
+  font-family:'Petrona',Georgia,serif;
+  font-weight:600;
+  font-size:1.3rem;
   margin:0;
-  color:var(--text);
+  color:var(--ink);
 }
 .results-count{
-  font-family:'Space Mono',ui-monospace,monospace;
+  font-family:'Courier Prime',ui-monospace,monospace;
   font-size:.74rem;
-  color:var(--text-muted);
+  color:var(--ink-muted);
 }
 
 .tickets{
   display:flex;
   flex-direction:column;
-  gap:.8rem;
+  gap:.6rem;
 }
 .ticket{
-  position:relative;
   display:grid;
-  grid-template-columns:3.6rem 1fr auto;
+  grid-template-columns:3.4rem 1fr auto;
   align-items:center;
-  gap:1rem;
-  background:var(--paper);
-  color:var(--ink);
+  gap:.9rem;
+  background:var(--surface);
+  border:1px solid var(--border);
   border-radius:.6rem;
-  padding:.95rem 1.1rem;
-  box-shadow:0 6px 18px rgba(0,0,0,.35);
+  padding:.85rem 1rem;
+  box-shadow:var(--shadow);
 }
-.ticket::before,
-.ticket::after{
-  content:"";
-  position:absolute;
-  left:calc(3.6rem + .5rem);
-  margin-left:-8px;
-  width:16px;
-  height:16px;
-  border-radius:50%;
-  background:var(--bg);
-}
-.ticket::before{top:-8px;}
-.ticket::after{bottom:-8px;}
 .ticket-date{
-  font-family:'Space Mono',ui-monospace,monospace;
+  font-family:'Courier Prime',ui-monospace,monospace;
   font-variant-numeric:tabular-nums;
   text-align:center;
   line-height:1.15;
   min-width:0;
-  border-right:1.5px dashed var(--border-paper);
-  padding-right:.9rem;
+  border-right:1px solid var(--border);
+  padding-right:.8rem;
 }
 .ticket-date .day{
   display:block;
   font-size:.64rem;
-  letter-spacing:.08em;
+  letter-spacing:.06em;
   text-transform:uppercase;
-  color:var(--ink-soft);
+  color:var(--ink-muted);
 }
 .ticket-date .num{
   display:block;
-  font-size:1.4rem;
+  font-size:1.25rem;
   font-weight:700;
   color:var(--ink);
 }
 .ticket-date .mon{
   display:block;
   font-size:.64rem;
-  letter-spacing:.06em;
+  letter-spacing:.04em;
   text-transform:uppercase;
-  color:var(--ink-soft);
+  color:var(--ink-muted);
 }
 .ticket-mid{min-width:0;}
 .ticket-label{
-  font-weight:700;
-  font-size:.98rem;
+  font-weight:600;
+  font-size:.95rem;
   margin:0 0 .2rem;
 }
 .ticket-role{
-  font-size:.83rem;
-  color:var(--ink-soft);
+  font-size:.82rem;
+  color:var(--ink-muted);
   margin:0;
 }
-.ticket-role b{color:var(--ink); font-weight:700;}
+.ticket-role b{color:var(--ink); font-weight:600;}
 .ticket-right{
   display:flex;
   flex-direction:column;
   align-items:flex-end;
-  gap:.35rem;
+  gap:.3rem;
   text-align:right;
 }
 .ticket-time{
-  font-family:'Space Mono',ui-monospace,monospace;
+  font-family:'Courier Prime',ui-monospace,monospace;
   font-variant-numeric:tabular-nums;
-  font-size:.83rem;
-  color:var(--ink-soft);
+  font-size:.8rem;
+  color:var(--ink-muted);
   white-space:nowrap;
 }
 .cast-badge{
-  font-family:'Space Mono',ui-monospace,monospace;
-  font-size:.65rem;
+  font-family:'Courier Prime',ui-monospace,monospace;
+  font-size:.68rem;
   font-weight:700;
-  letter-spacing:.05em;
-  padding:.16rem .5rem;
-  border-radius:.2rem;
+  letter-spacing:.02em;
+  padding:.12rem .5rem;
+  border-radius:.25rem;
   white-space:nowrap;
-  transform:rotate(-2deg);
-  border:1.5px solid currentColor;
+  border:1px solid var(--border);
+  color:var(--ink-muted);
 }
-.cast-badge.a{color:#8a5a00; background:rgba(138,90,0,.09);}
-.cast-badge.b{color:var(--accent2); background:rgba(224,72,62,.09);}
 
 .ticket-best{
-  box-shadow:0 6px 18px rgba(0,0,0,.35), 0 0 0 2px var(--accent), 0 0 26px rgba(255,183,3,.4);
+  border-color:var(--accent);
+  border-left-width:3px;
 }
 .best-tag{
   display:inline-block;
-  font-family:'Space Mono',ui-monospace,monospace;
+  font-family:'Courier Prime',ui-monospace,monospace;
   font-size:.6rem;
   font-weight:700;
-  letter-spacing:.05em;
+  letter-spacing:.04em;
   text-transform:uppercase;
-  color:var(--accent-ink);
-  background:var(--accent);
-  padding:.12rem .42rem;
-  border-radius:.2rem;
-  margin-left:.4rem;
+  color:var(--accent);
+  margin-left:.45rem;
   vertical-align:middle;
 }
 .match-badge{
-  font-family:'Space Mono',ui-monospace,monospace;
+  font-family:'Courier Prime',ui-monospace,monospace;
   font-variant-numeric:tabular-nums;
   font-size:.7rem;
   font-weight:700;
   color:var(--ink);
-  background:var(--paper-shade);
-  padding:.16rem .5rem;
-  border-radius:.2rem;
+  background:var(--surface-alt);
+  padding:.14rem .48rem;
+  border-radius:.25rem;
   white-space:nowrap;
 }
-.ticket-role .as-role{color:var(--ink-soft); font-weight:500;}
+.ticket-role .as-role{color:var(--ink-muted); font-weight:400;}
 .ticket-missing{
   font-size:.76rem;
-  color:var(--ink-soft);
-  margin:.35rem 0 0;
+  color:var(--ink-muted);
+  margin:.3rem 0 0;
 }
 .picks-line{
-  color:var(--text-muted);
+  color:var(--ink-muted);
   font-size:.85rem;
-  margin:0 0 1rem;
+  margin:0 0 .9rem;
 }
-.picks-line b{color:var(--accent); font-weight:700;}
+.picks-line b{color:var(--accent); font-weight:600;}
 
 .empty-state{
-  border:1.5px dashed var(--border-dark);
+  border:1px solid var(--border);
   border-radius:.6rem;
-  padding:1.6rem 1.2rem;
+  padding:1.5rem 1.2rem;
   text-align:center;
-  color:var(--text-muted);
-  font-size:.92rem;
-  background:var(--curtain);
+  color:var(--ink-muted);
+  font-size:.9rem;
+  background:var(--surface);
 }
 
 footer{
   margin-top:2.75rem;
   text-align:center;
-  font-family:'Space Mono',ui-monospace,monospace;
+  font-family:'Courier Prime',ui-monospace,monospace;
   font-size:.72rem;
-  letter-spacing:.02em;
-  color:var(--text-muted);
+  color:var(--ink-muted);
 }
 
 @media (prefers-reduced-motion: reduce){
@@ -383,7 +312,7 @@ footer{
 </style>
 
 <div class="wrap">
-  <div class="marquee">
+  <div class="masthead">
     <p class="eyebrow">Frozen &mdash; Sept 3&ndash;6</p>
     <h1>Who are you going to watch?</h1>
     <p class="sub">Pick everyone you want to see &mdash; we'll rank every performance by how many of your picks are in it.</p>
@@ -394,8 +323,8 @@ footer{
     <button class="idc-btn" id="idc-btn" type="button" aria-pressed="false">It doesn't matter &mdash; just show me the full run</button>
   </div>
 
-  <p class="section-label">Cast</p>
-  <div class="name-grid" id="name-grid" role="group" aria-label="Cast members"></div>
+  <div class="name-grid" id="name-grid" role="group" aria-label="Cast members, by role"></div>
+  <p class="no-match" id="no-match" hidden>No one by that name &mdash; check the spelling?</p>
 
   <div id="results"></div>
 
@@ -455,45 +384,52 @@ Object.entries(ROLES).forEach(([role, casts]) => {
   });
 });
 
-const allRawNames = Object.keys(namesIndex).sort((a,b) => DISPLAY_NAME[a].localeCompare(DISPLAY_NAME[b]));
-
 const grid = document.getElementById('name-grid');
 const resultsEl = document.getElementById('results');
 const searchEl = document.getElementById('search');
 const idcBtn = document.getElementById('idc-btn');
+const noMatchEl = document.getElementById('no-match');
 
 const selected = new Set(); // raw names, multi-select
 let idcActive = false;
 
-allRawNames.forEach(raw => {
-  const chip = document.createElement('button');
-  chip.type = 'button';
-  chip.className = 'name-chip';
-  const roles = [...new Set(namesIndex[raw].flatMap(e => e.roles))];
-  const nameSpan = document.createElement('span');
-  nameSpan.className = 'chip-name';
-  nameSpan.textContent = DISPLAY_NAME[raw];
-  const roleSpan = document.createElement('span');
-  roleSpan.className = 'chip-role';
-  roleSpan.textContent = roles.join(' / ');
-  chip.append(nameSpan, roleSpan);
-  chip.setAttribute('aria-pressed','false');
-  chip.dataset.raw = raw;
-  chip.addEventListener('click', () => toggleName(raw));
-  grid.appendChild(chip);
+// One section per role, in spreadsheet order; each role lists the people
+// who ever played it (a person can appear in more than one role's section).
+Object.entries(ROLES).forEach(([role, casts]) => {
+  const uniqueRaw = [...new Set(casts)];
+
+  const section = document.createElement('div');
+  section.className = 'role-section';
+
+  const label = document.createElement('p');
+  label.className = 'role-label';
+  label.textContent = role;
+  section.appendChild(label);
+
+  const chipRow = document.createElement('div');
+  chipRow.className = 'role-chips';
+  uniqueRaw.forEach(raw => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'name-chip';
+    chip.textContent = DISPLAY_NAME[raw];
+    chip.setAttribute('aria-pressed', 'false');
+    chip.dataset.raw = raw;
+    chip.addEventListener('click', () => toggleName(raw));
+    chipRow.appendChild(chip);
+  });
+  section.appendChild(chipRow);
+  grid.appendChild(section);
 });
 
 function toggleName(raw){
   idcActive = false;
   idcBtn.setAttribute('aria-pressed','false');
-  const chip = grid.querySelector(`.name-chip[data-raw="${CSS.escape(raw)}"]`);
-  if(selected.has(raw)){
-    selected.delete(raw);
-    if(chip) chip.setAttribute('aria-pressed','false');
-  } else {
-    selected.add(raw);
-    if(chip) chip.setAttribute('aria-pressed','true');
-  }
+  const nowPressed = !selected.has(raw);
+  if(nowPressed) selected.add(raw); else selected.delete(raw);
+  // a person can have a chip in more than one role section — keep them in sync
+  grid.querySelectorAll(`.name-chip[data-raw="${CSS.escape(raw)}"]`)
+    .forEach(c => c.setAttribute('aria-pressed', String(nowPressed)));
   renderResults();
 }
 
@@ -508,22 +444,16 @@ idcBtn.addEventListener('click', () => {
 searchEl.addEventListener('input', () => {
   const q = searchEl.value.trim().toLowerCase();
   let anyVisible = false;
-  grid.querySelectorAll('.name-chip').forEach(chip => {
-    const match = DISPLAY_NAME[chip.dataset.raw].toLowerCase().includes(q);
-    chip.classList.toggle('hidden', !match);
-    if(match) anyVisible = true;
+  grid.querySelectorAll('.role-section').forEach(section => {
+    let sectionVisible = false;
+    section.querySelectorAll('.name-chip').forEach(chip => {
+      const match = DISPLAY_NAME[chip.dataset.raw].toLowerCase().includes(q);
+      chip.classList.toggle('hidden', !match);
+      if(match){ sectionVisible = true; anyVisible = true; }
+    });
+    section.classList.toggle('hidden', !sectionVisible);
   });
-  let noMatch = grid.querySelector('.no-match');
-  if(!anyVisible){
-    if(!noMatch){
-      noMatch = document.createElement('p');
-      noMatch.className = 'no-match';
-      noMatch.textContent = 'No one by that name — check the spelling?';
-      grid.appendChild(noMatch);
-    }
-  } else if(noMatch){
-    noMatch.remove();
-  }
+  noMatchEl.hidden = anyVisible;
 });
 
 function ticketHTML(perf, roleText){
