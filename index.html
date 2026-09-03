@@ -1,0 +1,500 @@
+<title>Frozen Cast Finder</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg:#eef5f7;
+  --surface:#ffffff;
+  --surface-alt:#e2edf1;
+  --text:#122633;
+  --text-muted:#587082;
+  --border:#cddce3;
+  --accent-a:#1f7a94;
+  --accent-a-ink:#ffffff;
+  --accent-b:#b97a1e;
+  --accent-b-ink:#ffffff;
+  --shadow: 0 1px 2px rgba(18,38,51,.06), 0 8px 24px rgba(18,38,51,.07);
+  --focus: #1f7a94;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1c28;
+    --surface:#122a3b;
+    --surface-alt:#193347;
+    --text:#eaf4f7;
+    --text-muted:#93aebd;
+    --border:#264962;
+    --accent-a:#5fc4de;
+    --accent-a-ink:#062028;
+    --accent-b:#e6ac52;
+    --accent-b-ink:#2a1a04;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 12px 28px rgba(0,0,0,.35);
+    --focus: #5fc4de;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1c28;
+  --surface:#122a3b;
+  --surface-alt:#193347;
+  --text:#eaf4f7;
+  --text-muted:#93aebd;
+  --border:#264962;
+  --accent-a:#5fc4de;
+  --accent-a-ink:#062028;
+  --accent-b:#e6ac52;
+  --accent-b-ink:#2a1a04;
+  --shadow: 0 1px 2px rgba(0,0,0,.35), 0 12px 28px rgba(0,0,0,.35);
+  --focus: #5fc4de;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Manrope',ui-sans-serif,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  max-width:640px;
+  margin:0 auto;
+  padding:2.75rem 1.25rem 4rem;
+}
+
+/* header */
+.marquee{
+  text-align:center;
+  margin-bottom:2.25rem;
+}
+.eyebrow{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.72rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--accent-a);
+  margin:0 0 .6rem;
+}
+h1{
+  font-family:'Fraunces',Georgia,serif;
+  font-optical-sizing:auto;
+  font-weight:600;
+  font-size:clamp(1.9rem,6vw,2.6rem);
+  line-height:1.08;
+  letter-spacing:-.01em;
+  margin:0 0 .55rem;
+  text-wrap:balance;
+}
+.sub{
+  color:var(--text-muted);
+  font-size:.98rem;
+  max-width:34ch;
+  margin:0 auto;
+  line-height:1.5;
+}
+
+/* search + doesn't matter */
+.controls{
+  display:flex;
+  flex-direction:column;
+  gap:.7rem;
+  margin-bottom:1.4rem;
+}
+.search{
+  width:100%;
+  padding:.8rem 1rem;
+  border-radius:.7rem;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text);
+  font-family:'Manrope',sans-serif;
+  font-size:.95rem;
+}
+.search::placeholder{color:var(--text-muted);}
+.search:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
+
+.idc-btn{
+  width:100%;
+  padding:.85rem 1rem;
+  border-radius:.7rem;
+  border:1px dashed var(--accent-b);
+  background:transparent;
+  color:var(--accent-b);
+  font-family:'Manrope',sans-serif;
+  font-weight:700;
+  font-size:.92rem;
+  letter-spacing:.01em;
+  cursor:pointer;
+  transition:background .15s ease, color .15s ease;
+}
+.idc-btn:hover{background:var(--accent-b); color:var(--accent-b-ink);}
+.idc-btn:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
+.idc-btn[aria-pressed="true"]{background:var(--accent-b); color:var(--accent-b-ink);}
+
+/* name grid */
+.section-label{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.7rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  margin:0 0 .6rem;
+}
+.name-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(124px,1fr));
+  gap:.55rem;
+  margin-bottom:2.1rem;
+}
+.name-chip{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:.18rem;
+  padding:.55rem .75rem;
+  border-radius:.65rem;
+  border:1px solid var(--border);
+  background:var(--surface);
+  cursor:pointer;
+  text-align:left;
+  transition:border-color .15s ease, background .15s ease, color .15s ease;
+}
+.chip-name{
+  font-size:.88rem;
+  font-weight:700;
+  color:var(--text);
+}
+.chip-role{
+  font-size:.7rem;
+  font-weight:500;
+  letter-spacing:.01em;
+  color:var(--text-muted);
+}
+.name-chip:hover{border-color:var(--accent-a);}
+.name-chip:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
+.name-chip[aria-pressed="true"]{
+  background:var(--accent-a);
+  border-color:var(--accent-a);
+}
+.name-chip[aria-pressed="true"] .chip-name{color:var(--accent-a-ink);}
+.name-chip[aria-pressed="true"] .chip-role{color:var(--accent-a-ink); opacity:.85;}
+.name-chip.hidden{display:none;}
+.no-match{grid-column:1/-1; color:var(--text-muted); font-size:.88rem; padding:.3rem .1rem;}
+
+/* results */
+#results{scroll-margin-top:1rem;}
+.results-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:.6rem;
+  margin-bottom:.9rem;
+  flex-wrap:wrap;
+}
+.results-title{
+  font-family:'Fraunces',Georgia,serif;
+  font-weight:600;
+  font-size:1.35rem;
+  margin:0;
+}
+.results-count{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.76rem;
+  color:var(--text-muted);
+}
+
+.tickets{
+  display:flex;
+  flex-direction:column;
+  gap:.65rem;
+}
+.ticket{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:1rem;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:.85rem;
+  padding:.95rem 1.1rem;
+  box-shadow:var(--shadow);
+}
+.ticket-date{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-variant-numeric:tabular-nums;
+  text-align:center;
+  line-height:1.15;
+  min-width:3.6rem;
+}
+.ticket-date .day{
+  display:block;
+  font-size:.66rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+.ticket-date .num{
+  display:block;
+  font-size:1.35rem;
+  font-weight:500;
+  color:var(--text);
+}
+.ticket-date .mon{
+  display:block;
+  font-size:.66rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+}
+.ticket-mid{min-width:0;}
+.ticket-label{
+  font-weight:700;
+  font-size:.98rem;
+  margin:0 0 .15rem;
+}
+.ticket-role{
+  font-size:.85rem;
+  color:var(--text-muted);
+  margin:0;
+}
+.ticket-role b{color:var(--text); font-weight:700;}
+.ticket-right{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:.35rem;
+  text-align:right;
+}
+.ticket-time{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-variant-numeric:tabular-nums;
+  font-size:.85rem;
+  color:var(--text-muted);
+  white-space:nowrap;
+}
+.cast-badge{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.68rem;
+  font-weight:600;
+  letter-spacing:.04em;
+  padding:.18rem .55rem;
+  border-radius:999px;
+  white-space:nowrap;
+}
+.cast-badge.a{background:color-mix(in srgb, var(--accent-a) 16%, transparent); color:var(--accent-a);}
+.cast-badge.b{background:color-mix(in srgb, var(--accent-b) 18%, transparent); color:var(--accent-b);}
+
+.empty-state{
+  border:1px solid var(--border);
+  border-radius:.85rem;
+  padding:1.6rem 1.2rem;
+  text-align:center;
+  color:var(--text-muted);
+  font-size:.92rem;
+  background:var(--surface-alt);
+}
+
+footer{
+  margin-top:2.5rem;
+  text-align:center;
+  font-size:.78rem;
+  color:var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;}
+}
+</style>
+
+<div class="wrap">
+  <div class="marquee">
+    <p class="eyebrow">Frozen &mdash; Sept 3&ndash;6</p>
+    <h1>Who are you going to watch?</h1>
+    <p class="sub">Pick your cast member and we'll tell you exactly which performance to catch them in.</p>
+  </div>
+
+  <div class="controls">
+    <input class="search" id="search" type="text" placeholder="Search the cast&hellip;" autocomplete="off" aria-label="Search cast members">
+    <button class="idc-btn" id="idc-btn" type="button" aria-pressed="false">It doesn't matter &mdash; just show me the full run</button>
+  </div>
+
+  <p class="section-label">Cast</p>
+  <div class="name-grid" id="name-grid" role="group" aria-label="Cast members"></div>
+
+  <div id="results"></div>
+
+  <footer>Eight performances, one big feeling. Bring tissues for Act II.</footer>
+</div>
+
+<script>
+const PERFORMANCES = [
+  {mon:"Sep", num:"3",  day:"Thu", full:"Thursday, September 3", time:"9:00 AM", cast:"B", label:"School Show"},
+  {mon:"Sep", num:"3",  day:"Thu", full:"Thursday, September 3", time:"7:00 PM", cast:"A", label:"Special Invitation"},
+  {mon:"Sep", num:"4",  day:"Fri", full:"Friday, September 4",   time:"9:00 AM", cast:"B", label:"School Show"},
+  {mon:"Sep", num:"4",  day:"Fri", full:"Friday, September 4",   time:"7:00 PM", cast:"A", label:"Opening Night"},
+  {mon:"Sep", num:"5",  day:"Sat", full:"Saturday, September 5", time:"2:00 PM", cast:"A", label:"Matinee Show"},
+  {mon:"Sep", num:"5",  day:"Sat", full:"Saturday, September 5", time:"7:00 PM", cast:"B", label:"Evening Show"},
+  {mon:"Sep", num:"6",  day:"Sun", full:"Sunday, September 6",   time:"3:00 PM", cast:"A", label:"Matinee Show"},
+  {mon:"Sep", num:"6",  day:"Sun", full:"Sunday, September 6",   time:"7:00 PM", cast:"B", label:"Closing Show"},
+];
+
+const ROLES = {
+  "Anna":          ["GRACIE","ANYA","LANA","ANYA","ANYA","GRACIE","LANA","ANYA"],
+  "Elsa":          ["SHANE","CARA","SHELBY","CARA","CARA","SHANE","SHELBY","CARA"],
+  "Kristoff":      ["JOSH","JORDAN","JORDAN","JORDAN","JORDAN","JOSH","JORDAN","JOSH"],
+  "Hans":          ["KAI","KAI","KAI","KAI","KAI","DON","DON","DON"],
+  "Sven":          ["GAVIN","JACOB","JACOB","JACOB","GAVIN","GAVIN","JACOB","GAVIN"],
+  "Olaf":          ["SOUL","CHRIS","CHRIS","CHRIS","SOUL","SOUL","CHRIS","SOUL"],
+  "Weselton":      ["JEREMY","BRANDON","JEREMY","JEREMY","BRANDON","BRANDON","JEREMY","BRANDON"],
+  "King Agnarr":   ["JUSTINE","CHRISTIAN","CHRISTIAN","CHRISTIAN","JUSTINE","JUSTINE","CHRISTIAN","JUSTINE"],
+  "Queen Iduna":   ["PARADIS","PARADIS","DONNA","PARADIS","DONNA","DONNA","PARADIS","DONNA"],
+  "Bulda":         ["PENNY","LILY","PENNY","LILY","LILY","PENNY","LILY","PENNY"],
+  "Pabbie":        ["GAVIN","JACKSON","JACKSON","JACKSON","GAVIN","JACKSON","JACKSON","JACKSON"],
+  "Oaken":         ["ALEXANDRE","STEPHEN","ALEXANDRE","STEPHEN","STEPHEN","ALEXANDRE","STEPHEN","ALEXANDRE"],
+  "Young Anna":    ["LOLA","AVA G","ALEXIS","LOLA","ALIYA","ALIYA","AVA G","ALEXIS"],
+  "Young Elsa":    ["ALYSSA","AVA MUNA","ALYSSA","AVA MUNA","MADYSON","HAYDEN","ALYSSA","AVA MUNA"],
+  "Middle Anna":   ["JEMIAH","JEMIAH","CJ","JEMIAH","LAURA","LAURA","CJ","JEMIAH"],
+  "Middle Elsa":   ["RHENAE","RHENAE","JENNA","RHENAE","ZAIA","SAYURI","CAITLYN","RHENAE"],
+  "Bishop":        ["KAL-EL","LOGAN","KAL-EL","LOGAN","LOGAN","KAL-EL","KAL-EL","LOGAN"],
+};
+
+const DISPLAY_NAME = {
+  "GRACIE":"Gracie","ANYA":"Anya","LANA":"Lana","SHANE":"Shane","CARA":"Cara","SHELBY":"Shelby",
+  "JOSH":"Josh","JORDAN":"Jordan","KAI":"Kai","DON":"Don","GAVIN":"Gavin","JACOB":"Jacob",
+  "SOUL":"Soul","CHRIS":"Chris","JEREMY":"Jeremy","BRANDON":"Brandon","JUSTINE":"Justine",
+  "CHRISTIAN":"Christian","PARADIS":"Paradis","DONNA":"Donna","PENNY":"Penny","LILY":"Lily",
+  "JACKSON":"Jackson","ALEXANDRE":"Alexandre","STEPHEN":"Stephen","LOLA":"Lola","AVA G":"Ava G.",
+  "ALEXIS":"Alexis","ALIYA":"Aliya","ALYSSA":"Alyssa","AVA MUNA":"Ava Muna","MADYSON":"Madyson",
+  "HAYDEN":"Hayden","JEMIAH":"Jemiah","CJ":"CJ","LAURA":"Laura","RHENAE":"Rhenae","JENNA":"Jenna",
+  "ZAIA":"Zaia","SAYURI":"Sayuri","CAITLYN":"Caitlyn","KAL-EL":"Kal-El","LOGAN":"Logan",
+};
+
+const namesIndex = {};
+Object.entries(ROLES).forEach(([role, casts]) => {
+  casts.forEach((raw, i) => {
+    if(!namesIndex[raw]) namesIndex[raw] = [];
+    let entry = namesIndex[raw].find(e => e.perf === i);
+    if(!entry){ entry = {perf:i, roles:[]}; namesIndex[raw].push(entry); }
+    entry.roles.push(role);
+  });
+});
+
+const allRawNames = Object.keys(namesIndex).sort((a,b) => DISPLAY_NAME[a].localeCompare(DISPLAY_NAME[b]));
+
+const grid = document.getElementById('name-grid');
+const resultsEl = document.getElementById('results');
+const searchEl = document.getElementById('search');
+const idcBtn = document.getElementById('idc-btn');
+
+let selected = null; // raw name or "IDC"
+
+allRawNames.forEach(raw => {
+  const chip = document.createElement('button');
+  chip.type = 'button';
+  chip.className = 'name-chip';
+  const roles = [...new Set(namesIndex[raw].flatMap(e => e.roles))];
+  const nameSpan = document.createElement('span');
+  nameSpan.className = 'chip-name';
+  nameSpan.textContent = DISPLAY_NAME[raw];
+  const roleSpan = document.createElement('span');
+  roleSpan.className = 'chip-role';
+  roleSpan.textContent = roles.join(' / ');
+  chip.append(nameSpan, roleSpan);
+  chip.setAttribute('aria-pressed','false');
+  chip.dataset.raw = raw;
+  chip.addEventListener('click', () => selectName(raw));
+  grid.appendChild(chip);
+});
+
+function clearPressed(){
+  grid.querySelectorAll('.name-chip').forEach(c => c.setAttribute('aria-pressed','false'));
+  idcBtn.setAttribute('aria-pressed','false');
+}
+
+function selectName(raw){
+  clearPressed();
+  selected = raw;
+  const chip = grid.querySelector(`.name-chip[data-raw="${CSS.escape(raw)}"]`);
+  if(chip) chip.setAttribute('aria-pressed','true');
+  renderResultsForName(raw);
+}
+
+idcBtn.addEventListener('click', () => {
+  clearPressed();
+  selected = 'IDC';
+  idcBtn.setAttribute('aria-pressed','true');
+  renderFullRun();
+});
+
+searchEl.addEventListener('input', () => {
+  const q = searchEl.value.trim().toLowerCase();
+  let anyVisible = false;
+  grid.querySelectorAll('.name-chip').forEach(chip => {
+    const match = DISPLAY_NAME[chip.dataset.raw].toLowerCase().includes(q);
+    chip.classList.toggle('hidden', !match);
+    if(match) anyVisible = true;
+  });
+  let noMatch = grid.querySelector('.no-match');
+  if(!anyVisible){
+    if(!noMatch){
+      noMatch = document.createElement('p');
+      noMatch.className = 'no-match';
+      noMatch.textContent = 'No one by that name — check the spelling?';
+      grid.appendChild(noMatch);
+    }
+  } else if(noMatch){
+    noMatch.remove();
+  }
+});
+
+function ticketHTML(perf, roleText){
+  return `
+    <div class="ticket">
+      <div class="ticket-date">
+        <span class="day">${perf.day}</span>
+        <span class="num">${perf.num}</span>
+        <span class="mon">${perf.mon}</span>
+      </div>
+      <div class="ticket-mid">
+        <p class="ticket-label">${perf.label}</p>
+        <p class="ticket-role">${roleText}</p>
+      </div>
+      <div class="ticket-right">
+        <span class="cast-badge ${perf.cast.toLowerCase()}">Cast ${perf.cast}</span>
+        <span class="ticket-time">${perf.time}</span>
+      </div>
+    </div>`;
+}
+
+function renderResultsForName(raw){
+  const entries = namesIndex[raw].slice().sort((a,b) => a.perf - b.perf);
+  const name = DISPLAY_NAME[raw];
+  const tickets = entries.map(e => {
+    const perf = PERFORMANCES[e.perf];
+    const roleText = e.roles.length > 1
+      ? `Playing <b>${e.roles.join('</b> and <b>')}</b>`
+      : `Playing <b>${e.roles[0]}</b>`;
+    return ticketHTML(perf, roleText);
+  }).join('');
+
+  resultsEl.innerHTML = `
+    <div class="results-head">
+      <h2 class="results-title">${name}'s performances</h2>
+      <span class="results-count">${entries.length} of 8 shows</span>
+    </div>
+    <div class="tickets">${tickets}</div>
+  `;
+  resultsEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function renderFullRun(){
+  const tickets = PERFORMANCES.map(perf => ticketHTML(perf, `${perf.full}`)).join('');
+  resultsEl.innerHTML = `
+    <div class="results-head">
+      <h2 class="results-title">Any night's a good night</h2>
+      <span class="results-count">8 shows</span>
+    </div>
+    <div class="tickets">${tickets}</div>
+  `;
+  resultsEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+</script>
