@@ -283,6 +283,48 @@ h1{
 .cast-badge.a{background:color-mix(in srgb, var(--accent-a) 16%, transparent); color:var(--accent-a);}
 .cast-badge.b{background:color-mix(in srgb, var(--accent-b) 18%, transparent); color:var(--accent-b);}
 
+.ticket-best{
+  border-color:var(--accent-b);
+  box-shadow:var(--shadow), 0 0 0 1px var(--accent-b);
+}
+.best-tag{
+  display:inline-block;
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:.62rem;
+  font-weight:600;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--accent-b-ink);
+  background:var(--accent-b);
+  padding:.12rem .42rem;
+  border-radius:999px;
+  margin-left:.4rem;
+  vertical-align:middle;
+}
+.match-badge{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-variant-numeric:tabular-nums;
+  font-size:.7rem;
+  font-weight:600;
+  color:var(--text);
+  background:var(--surface-alt);
+  padding:.18rem .5rem;
+  border-radius:999px;
+  white-space:nowrap;
+}
+.ticket-role .as-role{color:var(--text-muted); font-weight:500;}
+.ticket-missing{
+  font-size:.78rem;
+  color:var(--text-muted);
+  margin:.3rem 0 0;
+}
+.picks-line{
+  color:var(--text-muted);
+  font-size:.85rem;
+  margin:-.5rem 0 .9rem;
+}
+.picks-line b{color:var(--text);}
+
 .empty-state{
   border:1px solid var(--border);
   border-radius:.85rem;
@@ -309,7 +351,7 @@ footer{
   <div class="marquee">
     <p class="eyebrow">Frozen &mdash; Sept 3&ndash;6</p>
     <h1>Who are you going to watch?</h1>
-    <p class="sub">Pick your cast member and we'll tell you exactly which performance to catch them in.</p>
+    <p class="sub">Pick everyone you want to see &mdash; we'll rank every performance by how many of your picks are in it.</p>
   </div>
 
   <div class="controls">
@@ -385,7 +427,8 @@ const resultsEl = document.getElementById('results');
 const searchEl = document.getElementById('search');
 const idcBtn = document.getElementById('idc-btn');
 
-let selected = null; // raw name or "IDC"
+const selected = new Set(); // raw names, multi-select
+let idcActive = false;
 
 allRawNames.forEach(raw => {
   const chip = document.createElement('button');
@@ -401,26 +444,28 @@ allRawNames.forEach(raw => {
   chip.append(nameSpan, roleSpan);
   chip.setAttribute('aria-pressed','false');
   chip.dataset.raw = raw;
-  chip.addEventListener('click', () => selectName(raw));
+  chip.addEventListener('click', () => toggleName(raw));
   grid.appendChild(chip);
 });
 
-function clearPressed(){
-  grid.querySelectorAll('.name-chip').forEach(c => c.setAttribute('aria-pressed','false'));
+function toggleName(raw){
+  idcActive = false;
   idcBtn.setAttribute('aria-pressed','false');
-}
-
-function selectName(raw){
-  clearPressed();
-  selected = raw;
   const chip = grid.querySelector(`.name-chip[data-raw="${CSS.escape(raw)}"]`);
-  if(chip) chip.setAttribute('aria-pressed','true');
-  renderResultsForName(raw);
+  if(selected.has(raw)){
+    selected.delete(raw);
+    if(chip) chip.setAttribute('aria-pressed','false');
+  } else {
+    selected.add(raw);
+    if(chip) chip.setAttribute('aria-pressed','true');
+  }
+  renderResults();
 }
 
 idcBtn.addEventListener('click', () => {
-  clearPressed();
-  selected = 'IDC';
+  selected.clear();
+  grid.querySelectorAll('.name-chip').forEach(c => c.setAttribute('aria-pressed','false'));
+  idcActive = true;
   idcBtn.setAttribute('aria-pressed','true');
   renderFullRun();
 });
@@ -465,22 +510,81 @@ function ticketHTML(perf, roleText){
     </div>`;
 }
 
-function renderResultsForName(raw){
-  const entries = namesIndex[raw].slice().sort((a,b) => a.perf - b.perf);
-  const name = DISPLAY_NAME[raw];
-  const tickets = entries.map(e => {
-    const perf = PERFORMANCES[e.perf];
-    const roleText = e.roles.length > 1
-      ? `Playing <b>${e.roles.join('</b> and <b>')}</b>`
-      : `Playing <b>${e.roles[0]}</b>`;
-    return ticketHTML(perf, roleText);
-  }).join('');
+function bestTicketHTML(perf, matched, total, isBest){
+  const names = matched.map(m =>
+    `<b>${DISPLAY_NAME[m.raw]}</b> <span class="as-role">as ${m.roles.join(' &amp; ')}</span>`
+  ).join(', ');
+  const missing = total > 1
+    ? [...selected].filter(raw => !matched.some(m => m.raw === raw))
+    : [];
+  const missingHTML = missing.length
+    ? `<p class="ticket-missing">Not in this one: ${missing.map(raw => DISPLAY_NAME[raw]).join(', ')}</p>`
+    : '';
+  const bestTag = isBest && total > 1 ? '<span class="best-tag">Best match</span>' : '';
+  const badge = total > 1 ? `<span class="match-badge">${matched.length}/${total}</span>` : '';
+
+  return `
+    <div class="ticket ${isBest && total > 1 ? 'ticket-best' : ''}">
+      <div class="ticket-date">
+        <span class="day">${perf.day}</span>
+        <span class="num">${perf.num}</span>
+        <span class="mon">${perf.mon}</span>
+      </div>
+      <div class="ticket-mid">
+        <p class="ticket-label">${perf.label}${bestTag}</p>
+        <p class="ticket-role">${names}</p>
+        ${missingHTML}
+      </div>
+      <div class="ticket-right">
+        ${badge}
+        <span class="cast-badge ${perf.cast.toLowerCase()}">Cast ${perf.cast}</span>
+        <span class="ticket-time">${perf.time}</span>
+      </div>
+    </div>`;
+}
+
+function renderResults(){
+  if(selected.size === 0){
+    resultsEl.innerHTML = `<div class="empty-state">Pick one or more cast members above and we'll rank the shows for you.</div>`;
+    return;
+  }
+
+  const total = selected.size;
+  const ranked = PERFORMANCES
+    .map((perf, i) => {
+      const matched = [...selected]
+        .map(raw => {
+          const entry = namesIndex[raw].find(e => e.perf === i);
+          return entry ? {raw, roles: entry.roles} : null;
+        })
+        .filter(Boolean);
+      return {perf, matched};
+    })
+    .filter(r => r.matched.length > 0)
+    .sort((a, b) => b.matched.length - a.matched.length);
+
+  if(ranked.length === 0){
+    resultsEl.innerHTML = `
+      <div class="results-head"><h2 class="results-title">No overlap</h2></div>
+      <div class="empty-state">None of your picks share a performance &mdash; double-check the names or try fewer picks.</div>
+    `;
+    return;
+  }
+
+  const bestCount = ranked[0].matched.length;
+  const title = total === 1 ? `${DISPLAY_NAME[[...selected][0]]}'s performances` : 'Best show for your group';
+  const picksLine = total > 1
+    ? `<p class="picks-line">Ranked for: ${[...selected].map(r => `<b>${DISPLAY_NAME[r]}</b>`).join(', ')}</p>`
+    : '';
+
+  const tickets = ranked.map(r => bestTicketHTML(r.perf, r.matched, total, r.matched.length === bestCount)).join('');
 
   resultsEl.innerHTML = `
     <div class="results-head">
-      <h2 class="results-title">${name}'s performances</h2>
-      <span class="results-count">${entries.length} of 8 shows</span>
+      <h2 class="results-title">${title}</h2>
+      <span class="results-count">${ranked.length} of 8 shows</span>
     </div>
+    ${picksLine}
     <div class="tickets">${tickets}</div>
   `;
   resultsEl.scrollIntoView({behavior:'smooth', block:'nearest'});
@@ -497,4 +601,6 @@ function renderFullRun(){
   `;
   resultsEl.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
+
+renderResults();
 </script>
