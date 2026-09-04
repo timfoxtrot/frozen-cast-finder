@@ -9,17 +9,14 @@
 <body class="bg-white text-slate-900">
 <div class="mx-auto max-w-xl px-4 pb-16 pt-8 sm:pt-10">
 
-  <div class="mb-5 space-y-2">
-    <input id="search" type="text" placeholder="Search the cast&hellip;" autocomplete="off" aria-label="Search cast members"
-      class="w-full rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400">
+  <div class="mb-5">
     <button id="idc-btn" type="button" aria-pressed="false"
       class="w-full rounded-md border border-slate-200 px-3 py-2 text-sm font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-700">
-      It doesn't matter &mdash; just show me the full run
+      Show all
     </button>
   </div>
 
   <div id="name-grid" class="mb-2 border-y border-slate-100 divide-y divide-slate-100" role="group" aria-label="Cast members, by role"></div>
-  <p id="no-match" hidden class="py-2 text-sm text-slate-400">No one by that name &mdash; check the spelling?</p>
 
   <div id="results" class="mt-6"></div>
 </div>
@@ -79,9 +76,7 @@ Object.entries(ROLES).forEach(([role, casts]) => {
 
 const grid = document.getElementById('name-grid');
 const resultsEl = document.getElementById('results');
-const searchEl = document.getElementById('search');
 const idcBtn = document.getElementById('idc-btn');
-const noMatchEl = document.getElementById('no-match');
 
 const selected = new Set(); // raw names currently picked, derived from roleSelection
 const roleSelection = {}; // role -> the one raw name picked for that role (or absent)
@@ -167,21 +162,6 @@ idcBtn.addEventListener('click', () => {
   idcActive = true;
   setIdcPressed(true);
   renderFullRun();
-});
-
-searchEl.addEventListener('input', () => {
-  const q = searchEl.value.trim().toLowerCase();
-  let anyVisible = false;
-  grid.querySelectorAll('.role-row').forEach(row => {
-    let rowVisible = false;
-    row.querySelectorAll('.name-chip').forEach(chip => {
-      const match = DISPLAY_NAME[chip.dataset.raw].toLowerCase().includes(q);
-      chip.classList.toggle('hidden', !match);
-      if(match){ rowVisible = true; anyVisible = true; }
-    });
-    row.classList.toggle('hidden', !rowVisible);
-  });
-  noMatchEl.hidden = anyVisible;
 });
 
 function fullCastListHTML(i){
