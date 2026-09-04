@@ -83,7 +83,8 @@ const searchEl = document.getElementById('search');
 const idcBtn = document.getElementById('idc-btn');
 const noMatchEl = document.getElementById('no-match');
 
-const selected = new Set(); // raw names, multi-select
+const selected = new Set(); // raw names currently picked, derived from roleSelection
+const roleSelection = {}; // role -> the one raw name picked for that role (or absent)
 let idcActive = false;
 
 const CHIP_ON = ['bg-slate-900','border-slate-900','text-white'];
@@ -91,6 +92,8 @@ const CHIP_OFF = ['bg-white','border-slate-200','text-slate-700'];
 
 // One inline row per role, in spreadsheet order; each role lists everyone
 // who ever played it (a person can appear in more than one role's row).
+// Only one cast member can be picked per role — picking a new one in a
+// row swaps out whichever was previously picked in that same row.
 Object.entries(ROLES).forEach(([role, casts]) => {
   const uniqueRaw = [...new Set(casts)];
 
@@ -111,24 +114,37 @@ Object.entries(ROLES).forEach(([role, casts]) => {
     chip.textContent = DISPLAY_NAME[raw];
     chip.setAttribute('aria-pressed', 'false');
     chip.dataset.raw = raw;
-    chip.addEventListener('click', () => toggleName(raw));
+    chip.addEventListener('click', () => pickInRole(role, raw, chipRow));
     chipRow.appendChild(chip);
   });
   row.appendChild(chipRow);
   grid.appendChild(row);
 });
 
-function toggleName(raw){
+function setChipPressed(scopeEl, raw, on){
+  const chip = scopeEl.querySelector(`.name-chip[data-raw="${CSS.escape(raw)}"]`);
+  if(!chip) return;
+  chip.setAttribute('aria-pressed', String(on));
+  chip.classList.remove(...(on ? CHIP_OFF : CHIP_ON));
+  chip.classList.add(...(on ? CHIP_ON : CHIP_OFF));
+}
+
+function pickInRole(role, raw, chipRow){
   idcActive = false;
   setIdcPressed(false);
-  const nowPressed = !selected.has(raw);
-  if(nowPressed) selected.add(raw); else selected.delete(raw);
-  // a person can have a chip in more than one role row — keep them in sync
-  grid.querySelectorAll(`.name-chip[data-raw="${CSS.escape(raw)}"]`).forEach(c => {
-    c.setAttribute('aria-pressed', String(nowPressed));
-    c.classList.remove(...(nowPressed ? CHIP_OFF : CHIP_ON));
-    c.classList.add(...(nowPressed ? CHIP_ON : CHIP_OFF));
-  });
+
+  const current = roleSelection[role];
+  if(current === raw){
+    delete roleSelection[role];
+    setChipPressed(chipRow, raw, false);
+  } else {
+    if(current) setChipPressed(chipRow, current, false);
+    roleSelection[role] = raw;
+    setChipPressed(chipRow, raw, true);
+  }
+
+  selected.clear();
+  Object.values(roleSelection).forEach(r => selected.add(r));
   renderResults();
 }
 
@@ -142,6 +158,7 @@ function setIdcPressed(on){
 
 idcBtn.addEventListener('click', () => {
   selected.clear();
+  Object.keys(roleSelection).forEach(role => delete roleSelection[role]);
   grid.querySelectorAll('.name-chip').forEach(c => {
     c.setAttribute('aria-pressed','false');
     c.classList.remove(...CHIP_ON);
